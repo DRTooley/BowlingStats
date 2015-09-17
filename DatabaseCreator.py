@@ -2,14 +2,11 @@ import sqlite3
 import csv
 
 if __name__ == '__main__':
-
-	
-
 	dbconnect = sqlite3.connect("BowlingDatabase.db")
 	cursor = dbconnect.cursor()
-	"""cursor.execute("CREATE TABLE stats(DateBowled Date, Score INT, League TEXT)")"""
-	"""
-	cursor.execute("DELETE FROM stats")
+	cursor.execute("CREATE TABLE stats(DateBowled Date, Score INT, GameNumber INT, League TEXT)")
+
+	#cursor.execute("DELETE FROM stats")
 	
 	with open('BowlingScores.csv') as scoresFile:
 		linereader = csv.reader(scoresFile)
@@ -22,12 +19,12 @@ if __name__ == '__main__':
 				scoreTwo = int(row[2])
 				scoreThree = int(row[3])
 				league = row[4]	
-				cursor.execute("INSERT INTO stats values(?, ?, ?)", (modifiedDate, scoreOne, league))
-				cursor.execute("INSERT INTO stats values(?, ?, ?)", (modifiedDate, scoreTwo, league))
-				cursor.execute("INSERT INTO stats values(?, ?, ?)", (modifiedDate, scoreThree, league))
+				cursor.execute("INSERT INTO stats values(?, ?, ?, ?)", (modifiedDate, scoreOne, 1,league))
+				cursor.execute("INSERT INTO stats values(?, ?, ?, ?)", (modifiedDate, scoreTwo, 2,league))
+				cursor.execute("INSERT INTO stats values(?, ?, ?, ?)", (modifiedDate, scoreThree, 3,league))
 
 	dbconnect.commit()
-        """
+
 	cursor.execute("SELECT * FROM stats")
 	for row in cursor:
 		print(row[0], row[1], row[2])

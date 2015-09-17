@@ -7,9 +7,38 @@ import numpy
 
 class BowlingEntry():
     def __init__(self, entry_data):
-        self.DateBowled = entry_data[0]
+        self.DateBowled = datetime.datetime.strptime(entry_data[0], "%Y-%m-%d")
         self.Score = entry_data[1]
-        self.League = entry_data[2]
+        self.GameNumber = entry_data[2]
+        self.League = entry_data[3]
+
+    def print(self):
+        print(self.DateBowled, ' ', self.GameNumber, ' ',self.Score)
+
+    def __le__(self, entry):
+        if self.DateBowled == entry.DateBowled:
+            return self.GameNumber <= entry.GameNumber
+        return self.DateBowled <= entry.DateBowled
+
+    def __ge__(self, entry):
+        if self.DateBowled == entry.DateBowled:
+            return self.GameNumber >= entry.GameNumber
+        return self.DateBowled >= entry.DateBowled
+
+
+    def __lt__(self, entry):
+        if self.DateBowled == entry.DateBowled:
+            return self.GameNumber < entry.GameNumber
+        return self.DateBowled < entry.DateBowled
+
+    def __gt__(self, entry):
+        if self.DateBowled == entry.DateBowled:
+            return self.GameNumber > entry.GameNumber
+        return self.DateBowled > entry.DateBowled
+
+    def __eq__(self, entry):
+        return self.DateBowled == entry.DateBowled and self.GameNumber == entry.GameNumber and self.Score == entry.Score
+
 
 def dated_dict_to_graph(my_dict):
     dates = sorted([datetime.datetime.strptime(key, "%Y-%m-%d") for key in my_dict.keys()])
@@ -26,9 +55,27 @@ def dated_dict_to_graph(my_dict):
     ax.autoscale_view()
     pyplot.plot(graph_dates, y)
 
+def distribution(information_list):
+    for key, value in information_list.items():
+        print(key, ' : ', value)
 
+    information_list.pop(0, None)
+
+    fig, ax = pyplot.subplots()
+    index = numpy.arange(len(information_list.keys()))
+    bar_width = 0.35
+    opacity = 0.4
+    pyplot.xlabel('Streak')
+    pyplot.ylabel('Amount')
+    pyplot.title('Occurances of Streak Lengths')
+    pyplot.xticks(index + bar_width, list(information_list.keys()))
+    mylist = [information_list[key] for key in information_list.keys()]
+    rects2 = pyplot.bar(index + bar_width, mylist, bar_width)
 
 def calculate_longest_hot_streak(bowling_information, hot_number=200):
+    bowling_information.sort()
+    [entry.print() for entry in bowling_information]
+    distro_information = {}
     longest_streak = 0
     current_streak = 0
     tmp_start = datetime.datetime.now()
@@ -36,16 +83,23 @@ def calculate_longest_hot_streak(bowling_information, hot_number=200):
     streak_end = datetime.datetime.now()
     for entry in bowling_information:
         if current_streak == 0:
-            tmp_start = datetime.datetime.strptime(entry.DateBowled, "%Y-%m-%d")
+            tmp_start = entry.DateBowled
         if entry.Score >= hot_number:
             current_streak += 1
-        elif current_streak > longest_streak:
+        elif current_streak >= longest_streak:
             streak_start = tmp_start
-            streak_end = datetime.datetime.strptime(entry.DateBowled, "%Y-%m-%d")
+            streak_end = entry.DateBowled
             longest_streak = current_streak
+            distro_information[current_streak] = distro_information.get(current_streak, 0) + 1
             current_streak = 0
+
         else:
+            distro_information[current_streak] = distro_information.get(current_streak, 0) + 1
             current_streak = 0
+    distribution(distro_information)
+    print("Your current " + str(hot_number) + "+ streak is " + str(current_streak) + " games!")
+    print("Starting on " + tmp_start.strftime('%m/%d/%Y') + " and ending on " + bowling_information[-1].DateBowled.strftime('%m/%d/%Y'))
+    print('')
 
     print("Your longest " + str(hot_number) + "+ streak is " + str(longest_streak) + " games!")
     print("Starting on " + streak_start.strftime('%m/%d/%Y') + " and ending on " + streak_end.strftime('%m/%d/%Y'))
@@ -99,21 +153,16 @@ def multiple_game_average(bowling_information, number_of_games=12):
 
 
 
-
-
-
-
-
 if __name__ == "__main__":
     dbcon = sqlite3.connect("BowlingDatabase.db")
     cursor = dbcon.cursor()
     cursor.execute("SELECT * FROM stats")
     bowling_information = [BowlingEntry(row) for row in cursor]
 
-    calculate_longest_hot_streak(bowling_information)
-    graph_yearly_high_scores(bowling_information)
-    multiple_game_average(bowling_information)
-    multiple_game_average(bowling_information, 32)
+    calculate_longest_hot_streak(bowling_information, 200)
+    #graph_yearly_high_scores(bowling_information)
+    #multiple_game_average(bowling_information)
+    #multiple_game_average(bowling_information, 32)
     pyplot.show()
 
 
