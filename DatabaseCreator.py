@@ -4,9 +4,10 @@ import csv
 if __name__ == '__main__':
 	dbconnect = sqlite3.connect("BowlingDatabase.db")
 	cursor = dbconnect.cursor()
+	cursor.execute("DROP TABLE stats")
 	cursor.execute("CREATE TABLE stats(DateBowled Date, Score INT, GameNumber INT, League TEXT)")
 
-	#cursor.execute("DELETE FROM stats")
+
 	
 	with open('BowlingScores.csv') as scoresFile:
 		linereader = csv.reader(scoresFile)
