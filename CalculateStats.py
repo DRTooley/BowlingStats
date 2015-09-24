@@ -82,7 +82,7 @@ def graph_yearly_high_scores(bowling_information):
     yearly_scores = {}
 
     for entry in bowling_information:
-        year = entry.DateBowled[0:4]
+        year = entry.DateBowled.year
         if year in yearly_scores:
             if entry.Score > yearly_scores[year]:
                 yearly_scores[year] = entry.Score
@@ -92,7 +92,7 @@ def graph_yearly_high_scores(bowling_information):
     yrs = sorted(list(yearly_scores.keys()))
     y = [yearly_scores[yrs[i]] for i in range(len(yrs))]
 
-    graph_yrs = [datetime.datetime.strptime(single_yr, "%Y") for single_yr in yrs]
+    graph_yrs = [datetime.datetime.strptime(str(single_yr), "%Y") for single_yr in yrs]
     graph_dates = mpl_dates.date2num(graph_yrs)
     fig, ax = pyplot.subplots()
     years = mpl_dates.YearLocator()   # every year

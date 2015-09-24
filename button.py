@@ -5,9 +5,9 @@ from PyQt5.QtWidgets import *
 
 class menuButton(QGraphicsWidget):
     pressed = pyqtSignal()
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, name="Button"):
         super(menuButton, self).__init__(parent)
-
+        self.name = name
         self.setAcceptHoverEvents(True)
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
 
@@ -58,7 +58,7 @@ class menuButton(QGraphicsWidget):
         myFont.setPixelSize(18)
         painter.setFont(myFont)
 
-        painter.drawText(QRectF(-21, -57, 145, 40), "Button")
+        painter.drawText(QRectF(-63, -55, 145, 40), self.name)
 
 
 

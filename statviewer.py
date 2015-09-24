@@ -16,7 +16,7 @@ class statViewer(QGraphicsView):
     def __init__(self):
         super(statViewer, self).__init__()
 
-        self.bgPixmap = QPixmap("images/bg2.png")
+        self.bgPixmap = QPixmap("images/main_background.png")
         self.getBowlingInfo()
         self.viewSetUp()
         self.sceneCreation()
@@ -49,13 +49,16 @@ class statViewer(QGraphicsView):
 
     def addButtons(self):
         buttonParent = QGraphicsRectItem()
-        oneButton = menuButton(buttonParent)
+        oneButton = menuButton(buttonParent, "Multi-Game Avg")
         oneButton.pressed.connect(self.oneButtonPress)
-        twoButton = menuButton(buttonParent)
+        twoButton = menuButton(buttonParent, "Hot Streak")
         twoButton.pressed.connect(self.twoButtonPress)
+        threeButton = menuButton(buttonParent, "High Games")
+        threeButton.pressed.connect(self.threeButtonPress)
 
         oneButton.setPos(0, 0)
         twoButton.setPos(0, 50)
+        threeButton.setPos(200, 0)
 
         self.scene.addItem(buttonParent)
         buttonParent.setPos(100, 100)
@@ -68,15 +71,13 @@ class statViewer(QGraphicsView):
         painter.drawPixmap(QRectF.topLeft(), self.bgPixmap)
 
     def oneButtonPress(self):
-        #cs.calculate_longest_hot_streak(self.bowling_information, 200)
-        #graph_yearly_high_scores(bowling_information)
         cs.multiple_game_average(self.bowling_information)
-        #multiple_game_average(bowling_information, 32)
         pyplot.show()
 
     def twoButtonPress(self):
         cs.calculate_longest_hot_streak(self.bowling_information, 200)
-        #graph_yearly_high_scores(bowling_information)
-        #multiple_game_average(bowling_information)
-        #multiple_game_average(bowling_information, 32)
+        pyplot.show()
+
+    def threeButtonPress(self):
+        cs.graph_yearly_high_scores(self.bowling_information)
         pyplot.show()
