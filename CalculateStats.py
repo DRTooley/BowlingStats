@@ -1,5 +1,4 @@
 
-import sqlite3
 import datetime
 import matplotlib.pyplot as pyplot
 import matplotlib.dates as mpl_dates
